@@ -17,6 +17,7 @@ type CreateBookInput struct {
 }
 
 type UpdateBookInput struct {
+	gorm.Model
 	Title  string `json:"title"`
 	Author string `json:"author"`
 }

@@ -40,8 +40,8 @@ func FindBook(c *gin.Context) {
 
 func UpdateBook(c *gin.Context) {
 	var book models.Book
-	if error := models.DB.Where("id = ? ", c.Param("id")).First(&book).Error; error != nil {
-		c.JSON(http.StatusBadRequest, "Record Not Found")
+	if error := models.DB.Where("id = ?", c.Param("id")).First(&book).Error; error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
 
@@ -50,8 +50,16 @@ func UpdateBook(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	if err := models.DB.Model(&book).Updates(input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err})
-	}
+	models.DB.Model(&book).Updates(&input)
 	c.JSON(http.StatusOK, gin.H{"data": book})
+}
+
+func DeleteBook(c *gin.Context) {
+	var book models.Book
+	if error := models.DB.Where("id = ?", c.Param("id")).First(&book).Error; error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		return
+	}
+
+	models.DB.Delete(&book)
 }
